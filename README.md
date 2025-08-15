@@ -1,67 +1,87 @@
-# Summary of Key Features in the Telecom Customer Dataset
+# Telecom Churn Prediction
 
-## Main Takeaway
+## Project Overview
+This repository contains a complete end-to-end workflow for predicting customer churn in a telecommunications dataset. It includes data preprocessing, exploratory analysis, model training, evaluation, feature importance, and retention strategy recommendations.
 
-The provided telecom dataset offers a comprehensive view of **customer demographics, services, billing, and churn behavior**. This enables robust customer segmentation, churn prediction modeling, and detailed analytics for improving retention strategies.
+## Repository Structure
+```
+.
+├── LICENSE
+├── README.md
+├── Telecom_X_Prediction.ipynb    # Jupyter notebook with full analysis and code
+└── telecomx_cleaned.csv          # Cleaned telecom customer dataset
+```
 
-***
+## Dataset
+- **telecomx_cleaned.csv**:  
+  - ~7,267 customer records  
+  - Features: demographics, service usage, contract details, billing and payment  
+  - Target: `Churn` (Boolean)
 
-## Column Descriptions
+## Analysis Steps
 
-| Column                   | Type     | Description and Key Values                                            |
-|--------------------------|----------|-----------------------------------------------------------------------|
-| customerID               | String   | Unique identifier for each customer                                   |
-| Churn                    | Boolean  | Whether the customer has churned (True/False)                         |
-| gender                   | String   | Customer gender ("Male"/"Female")                                     |
-| SeniorCitizen            | Integer  | 1 if age 65 or older, else 0                                          |
-| Partner                  | Boolean  | Whether the customer has a partner (True/False)                       |
-| Dependents               | Boolean  | Whether the customer has dependents (True/False)                      |
-| tenure                   | Integer  | Number of months the customer has stayed                              |
-| PhoneService             | Boolean  | Whether the customer has a phone service (True/False)                 |
-| MultipleLines            | String   | "No", "Yes", or "No phone service"                                    |
-| InternetService          | String   | "DSL", "Fiber optic", or "No internet service"                        |
-| OnlineSecurity           | String   | "Yes", "No", or "No internet service"                                 |
-| OnlineBackup             | String   | "Yes", "No", or "No internet service"                                 |
-| DeviceProtection         | String   | "Yes", "No", or "No internet service"                                 |
-| TechSupport              | String   | "Yes", "No", or "No internet service"                                 |
-| StreamingTV              | String   | "Yes", "No", or "No internet service"                                 |
-| StreamingMovies          | String   | "Yes", "No", or "No internet service"                                 |
-| Contract                 | String   | Type of contract: "Month-to-month", "One year", "Two year"            |
-| PaperlessBilling         | Boolean  | Whether billing is paperless (True/False)                             |
-| PaymentMethod            | String   | Payment method (e.g., "Mailed check", "Credit card (automatic)")      |
-| Charges.Monthly          | Float    | Current monthly charges                                               |
-| Charges.Total            | Float    | Total charges to date                                                 |
-| Charges.Daily            | Float    | Average daily charges                                                 |
+1. **Exploratory Data Analysis (EDA)**
+   - Summary statistics and class balance  
+   - Visualizations: distributions, boxplots, scatter plots  
+   - Correlation matrix and heatmap to identify relationships
 
-***
+2. **Preprocessing**
+   - Drop irrelevant columns (`customerID`, `Charges.Daily`)  
+   - One-hot encoding for categorical variables  
+   - Train/test split (80/20) with stratification  
+   - Standard scaling for models sensitive to feature scale  
 
-## Feature Categories
+3. **Handling Class Imbalance**
+   - Applied SMOTE to oversample minority class  
+   - Tuned sampling strategy to balance precision and recall  
+   - Adjusted decision thresholds via precision–recall curve
 
-- **Demographics**: gender, SeniorCitizen, Partner, Dependents
-- **Services**: PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies
-- **Contract & Billing**: tenure, Contract, PaperlessBilling, PaymentMethod, Charges.Monthly, Charges.Total, Charges.Daily
-- **Churn Label**: Churn (target for churn prediction/analysis)
+4. **Model Training & Evaluation**
+   - **Logistic Regression** (scaled inputs + SMOTE)  
+   - **Random Forest** (unscaled inputs + SMOTE)  
+   - Metrics: accuracy, precision, recall, F1-score, ROC AUC, confusion matrix  
+   - Threshold tuning to meet business targets (e.g., ≥75% precision)
 
-***
+5. **Feature Importance**
+   - Extracted coefficients from Logistic Regression  
+   - Retrieved `feature_importances_` from Random Forest  
+   - Identified top predictors of churn
 
-## Notes on Key Features
+6. **Retention Strategies**
+   - Strengthen long-term contracts  
+   - Promote add-on services and bundles  
+   - Improve billing methods and offer pricing incentives  
+   - Proactive support for at-risk customers
 
-1. **Churn** is the primary outcome variable, vital for retention and lifetime value analysis.
-2. **Service features** (Internet, security, tech support, streaming) allow for customer service-bundle analysis.
-3. **Contract and tenure** indicate customer loyalty and predictability of future churn.
-4. **Billing and payment features** (monthly, total, daily charges, payment method, paperless preference) are critical for understanding customer value and payment trends.
-5. **Demographic variables** support segmentation by age (SeniorCitizen), household, and gender, which can identify at-risk groups or those with high lifetime value.
-6. String-based features often use three categories to explicitly separate "no service" situations from an active "No" (e.g., "No internet service" vs. "No").
+## Key Findings
+- **Top drivers of churn**: month-to-month contracts, lack of service add-ons (security, tech support), fiber-optic Internet, electronic check payments, higher monthly charges.
+- **Model performance**:
+  - Logistic Regression: high recall (74%) and ROC AUC (0.80)  
+  - Random Forest: higher precision (59%) and overall accuracy (75%)  
+- **Optimal trade-off**: threshold tuning at ~0.708 achieves ~75% precision with acceptable recall.
 
-***
+## How to Run
+1. Clone the repository:
+   ```
+   git clone https://github.com/kaio326/alura-telecom-x-2-data-prediction.git
+   cd alura-telecom-x-2-data-prediction
+   ```
+2. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+3. Launch the notebook:
+   ```
+   jupyter notebook Telecom_X_Prediction.ipynb
+   ```
 
-## Use Cases Enabled by Dataset
+## Future Improvements
+- Add cross-validation and hyperparameter optimization  
+- Modularize code into reusable functions or scripts  
+- Implement an ensemble method for balanced precision–recall  
+- Automate data pipeline and model deployment  
+- Monitor model drift and retrain periodically
 
-- **Churn Prediction Modeling** (using all features)
-- **Customer Segmentation** (demographics, services, billing)
-- **Product Bundle Analysis** (which services/bundles reduce churn)
-- **Lifetime Value Calculation** (combining tenure and charges)
-- **Payment Method Impact Studies** (analyzing churn/payment method interaction)
-- **Paperless Billing Adoption Analysis** (environmental initiatives, cost-based studies)
-
-The dataset structure is ideal for both supervised machine learning and exploratory customer value analysis. It captures the essential variables for understanding how customer characteristics, product adoption, and billing behaviors interact to drive retention and churn.
+## License
+This project is licensed under the MIT License.  
+```
